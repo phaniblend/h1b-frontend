@@ -9,7 +9,7 @@ console.log('Environment variables:', {
 });
 
 // Force the correct API URL for now
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/+$/, '') || 'http://localhost:5000/api';
 console.log('Using API_BASE_URL:', API_BASE_URL);
 
 interface User {
@@ -34,6 +34,16 @@ interface AuthState {
   initializeAuth: () => void;
 }
 
+// Add error logging
+const handleApiError = async (response: Response) => {
+  try {
+    const error = await response.json();
+    throw new Error(error.message || `API Error: ${response.status}`);
+  } catch (e) {
+    throw new Error(`Failed with status: ${response.status}`);
+  }
+};
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: localStorage.getItem('token'),
@@ -52,8 +62,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Login failed');
+        await handleApiError(response);
       }
 
       const data = await response.json();
@@ -84,8 +93,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Registration failed');
+        await handleApiError(response);
       }
 
       // Registration successful - auto-login
