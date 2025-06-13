@@ -23,7 +23,7 @@ export const Navbar = () => {
   <img 
     src="/cap-logo.svg" 
     alt="Capital Recruiters" 
-    className="w-10 h-10"
+    className="w-50 h-10"
   />
   <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
     
