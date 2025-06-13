@@ -9,8 +9,7 @@ console.log('Environment variables:', {
 });
 
 // Force the correct API URL for now
-const API_BASE_URL = 'https://freedom-be-production.up.railway.app/api';
-
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 console.log('Using API_BASE_URL:', API_BASE_URL);
 
 interface User {
