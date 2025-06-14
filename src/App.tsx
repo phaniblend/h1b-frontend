@@ -1,116 +1,109 @@
-import { Routes, Route } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
-import { Navbar } from './components/layout/Navbar';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import { Footer } from './components/layout/Footer';
-import { LoadingSpinner } from './components/ui/LoadingSpinner';
-
-// Pages
 import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import HowItWorksPage from './pages/HowItWorksPage';
+import PricingPage from './pages/PricingPage';
+import SavingsCalculator from './pages/SavingsCalculator';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import ApplicationPage from './pages/ApplicationPage';
-import DocumentsPage from './pages/DocumentsPage';
-import TimesheetsPage from './pages/TimesheetsPage';
-import PaymentsPage from './pages/PaymentsPage';
-import ProfilePage from './pages/ProfilePage';
-import SavingsCalculatorPage from './pages/SavingsCalculatorPage';
-import AdvisorBookingPage from './pages/AdvisorBookingPage';
+import OnboardingConfirmationPage from './pages/OnboardingConfirmationPage';
+import PaymentPage from './pages/PaymentPage';
+import Dashboard from './pages/Dashboard';
+import DocumentUpload from './pages/DocumentUpload';
+import TimesheetPage from './pages/TimesheetPage';
+import BenefitsPage from './pages/BenefitsPage';
 import CompliancePage from './pages/CompliancePage';
-import ReportsPage from './pages/ReportsPage';
-
-// Protected Route Component
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import GreenCardPage from './pages/GreenCardPage';
+import ReferralPage from './pages/ReferralPage';
+import HelpPage from './pages/HelpPage';
+import ContactPage from './pages/ContactPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import { useAuthStore } from './store/authStore';
 
 function App() {
-  const { isLoading } = useAuthStore();
+  const { isAuthenticated, user, initializeAuth } = useAuthStore();
   
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
-  }
+  // Only consider user authenticated if we have both token and user data
+  const isActuallyAuthenticated = isAuthenticated && user;
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="flex-1">
+      <main>
         <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/calculator" element={<SavingsCalculatorPage />} />
-          <Route path="/book-advisor" element={<AdvisorBookingPage />} />
-          
-          {/* Protected Routes */}
-          <Route
-            path="/dashboard"
-            element={
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/calculator" element={<SavingsCalculator />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            
+            {/* Auth Routes */}
+            <Route 
+              path="/login" 
+              element={isActuallyAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />} 
+            />
+            <Route 
+              path="/register" 
+              element={isActuallyAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />} 
+            />
+            <Route path="/onboarding-confirmation" element={<OnboardingConfirmationPage />} />
+            
+            {/* Protected Routes */}
+            <Route path="/dashboard" element={
               <ProtectedRoute>
-                <DashboardPage />
+                <Dashboard />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/application"
-            element={
+            } />
+            <Route path="/documents" element={
               <ProtectedRoute>
-                <ApplicationPage />
+                <DocumentUpload />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/documents"
-            element={
+            } />
+            <Route path="/timesheets" element={
               <ProtectedRoute>
-                <DocumentsPage />
+                <TimesheetPage />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/timesheets"
-            element={
+            } />
+            <Route path="/benefits" element={
               <ProtectedRoute>
-                <TimesheetsPage />
+                <BenefitsPage />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/payments"
-            element={
-              <ProtectedRoute>
-                <PaymentsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/compliance"
-            element={
+            } />
+            <Route path="/compliance" element={
               <ProtectedRoute>
                 <CompliancePage />
               </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/reports"
-            element={
+            } />
+            <Route path="/green-card" element={
               <ProtectedRoute>
-                <ReportsPage />
+                <GreenCardPage />
               </ProtectedRoute>
-            }
-          />
-        </Routes>
+            } />
+            <Route path="/referrals" element={
+              <ProtectedRoute>
+                <ReferralPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/payment" element={
+              <ProtectedRoute>
+                <PaymentPage />
+              </ProtectedRoute>
+            } />
+                  </Routes>
       </main>
       <Footer />
     </div>

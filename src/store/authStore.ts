@@ -45,7 +45,7 @@ const handleApiError = async (response: Response) => {
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  user: null,
+  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
   token: localStorage.getItem('token'),
   isLoading: false,
   isAuthenticated: !!localStorage.getItem('token'),
@@ -75,6 +75,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
       
       localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -107,12 +108,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     set({ user: null, token: null, isAuthenticated: false });
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     // Redirect to homepage after logout
     window.location.href = '/';
   },
   
   setUser: (user: User) => {
     set({ user, isAuthenticated: true });
+    localStorage.setItem('user', JSON.stringify(user));
   },
   
   setToken: (token: string) => {
@@ -130,9 +133,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   initializeAuth: () => {
     const token = localStorage.getItem('token');
-    if (token) {
-      set({ token, isAuthenticated: true });
+    const user = localStorage.getItem('user');
+    if (token && user) {
+      set({ 
+        token, 
+        user: JSON.parse(user), 
+        isAuthenticated: true 
+      });
       // TODO: Validate token with backend
+    } else if (token) {
+      // If we have a token but no user data, create a mock user for demo
+      const mockUser = {
+        id: '1',
+        email: 'demo@h1bconnect.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        role: 'user'
+      };
+      set({ 
+        token, 
+        user: mockUser, 
+        isAuthenticated: true 
+      });
+      localStorage.setItem('user', JSON.stringify(mockUser));
     }
   },
 })); 
