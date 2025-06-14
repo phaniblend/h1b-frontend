@@ -87,6 +87,9 @@ export default {
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
       },
+      width: {
+        '50': '12.5rem', // 200px
+      },
     },
   },
   plugins: [],

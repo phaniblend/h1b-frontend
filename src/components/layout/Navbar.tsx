@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut, Calculator, FileText, Clock, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Calculator, FileText, Clock, Settings, Home, CreditCard, Users, HelpCircle, Shield, Award } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
 export const Navbar = () => {
@@ -19,7 +19,7 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <a href="http://capitalrecruiters.net/" className="flex items-center space-x-2">
+            <a href="https://capitalrecruiters.net" className="flex items-center space-x-2">
               <img 
                 src="/cap-logo.svg" 
                 alt="Capital Recruiters" 
@@ -35,7 +35,8 @@ export const Navbar = () => {
                 <span className="text-white font-bold text-lg">H</span>
               </div>
             </a>
-            <Link to="/" className="ml-4">
+            <Link to="/" className="ml-4 flex items-center space-x-2">
+              <Home className="h-5 w-5 text-blue-600" />
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
                 H1BConnect
               </span>
@@ -46,15 +47,22 @@ export const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {!isAuthenticated ? (
               <>
-                <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors">
+                <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors flex items-center">
+                  <Home className="h-4 w-4 mr-1" />
                   Home
+                </Link>
+                <Link to="/how-it-works" className="text-gray-700 hover:text-blue-600 transition-colors">
+                  How It Works
+                </Link>
+                <Link to="/pricing" className="text-gray-700 hover:text-blue-600 transition-colors">
+                  Pricing
                 </Link>
                 <Link to="/calculator" className="text-gray-700 hover:text-blue-600 transition-colors flex items-center">
                   <Calculator className="h-4 w-4 mr-1" />
                   Calculator
                 </Link>
-                <Link to="/book-advisor" className="text-gray-700 hover:text-blue-600 transition-colors">
-                  Book Advisor
+                <Link to="/contact" className="text-gray-700 hover:text-blue-600 transition-colors">
+                  Contact
                 </Link>
                 <Link to="/login" className="text-gray-700 hover:text-blue-600 transition-colors">
                   Login
@@ -68,6 +76,10 @@ export const Navbar = () => {
               </>
             ) : (
               <>
+                <Link to="/" className="text-gray-700 hover:text-blue-600 transition-colors flex items-center">
+                  <Home className="h-4 w-4 mr-1" />
+                  Home
+                </Link>
                 <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 transition-colors">
                   Dashboard
                 </Link>
@@ -79,6 +91,10 @@ export const Navbar = () => {
                   <FileText className="h-4 w-4 mr-1" />
                   Documents
                 </Link>
+                <Link to="/benefits" className="text-gray-700 hover:text-blue-600 transition-colors flex items-center">
+                  <Award className="h-4 w-4 mr-1" />
+                  Benefits
+                </Link>
                 <div className="relative group">
                   <button className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
                     <User className="h-5 w-5" />
@@ -89,11 +105,20 @@ export const Navbar = () => {
                       <Settings className="h-4 w-4 mr-2" />
                       Profile
                     </Link>
-                    <Link to="/compliance" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <Link to="/compliance" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                      <Shield className="h-4 w-4 mr-2" />
                       Compliance
                     </Link>
-                    <Link to="/reports" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      Reports
+                    <Link to="/green-card" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Green Card
+                    </Link>
+                    <Link to="/referral" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                      <Users className="h-4 w-4 mr-2" />
+                      Referral Program
+                    </Link>
+                    <Link to="/help" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                      <HelpCircle className="h-4 w-4 mr-2" />
+                      Help & Support
                     </Link>
                     <button 
                       onClick={handleLogout}
@@ -127,10 +152,25 @@ export const Navbar = () => {
                 <>
                   <Link 
                     to="/" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Home className="h-4 w-4 mr-2" />
+                    Home
+                  </Link>
+                  <Link 
+                    to="/how-it-works" 
                     className="block px-3 py-2 text-gray-700 hover:text-blue-600"
                     onClick={() => setIsOpen(false)}
                   >
-                    Home
+                    How It Works
+                  </Link>
+                  <Link 
+                    to="/pricing" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Pricing
                   </Link>
                   <Link 
                     to="/calculator" 
@@ -141,11 +181,11 @@ export const Navbar = () => {
                     Calculator
                   </Link>
                   <Link 
-                    to="/book-advisor" 
+                    to="/contact" 
                     className="block px-3 py-2 text-gray-700 hover:text-blue-600"
                     onClick={() => setIsOpen(false)}
                   >
-                    Book Advisor
+                    Contact
                   </Link>
                   <Link 
                     to="/login" 
@@ -164,6 +204,14 @@ export const Navbar = () => {
                 </>
               ) : (
                 <>
+                  <Link 
+                    to="/" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Home className="h-4 w-4 mr-2" />
+                    Home
+                  </Link>
                   <Link 
                     to="/dashboard" 
                     className="block px-3 py-2 text-gray-700 hover:text-blue-600"
@@ -188,26 +236,51 @@ export const Navbar = () => {
                     Documents
                   </Link>
                   <Link 
+                    to="/benefits" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Award className="h-4 w-4 mr-2" />
+                    Benefits
+                  </Link>
+                  <Link 
+                    to="/compliance" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Compliance
+                  </Link>
+                  <Link 
+                    to="/green-card" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Green Card
+                  </Link>
+                  <Link 
+                    to="/referral" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Referral Program
+                  </Link>
+                  <Link 
+                    to="/help" 
+                    className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <HelpCircle className="h-4 w-4 mr-2" />
+                    Help & Support
+                  </Link>
+                  <Link 
                     to="/profile" 
                     className="block px-3 py-2 text-gray-700 hover:text-blue-600 flex items-center"
                     onClick={() => setIsOpen(false)}
                   >
                     <Settings className="h-4 w-4 mr-2" />
                     Profile
-                  </Link>
-                  <Link 
-                    to="/compliance" 
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Compliance
-                  </Link>
-                  <Link 
-                    to="/reports" 
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-600"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Reports
                   </Link>
                   <button 
                     onClick={handleLogout}
