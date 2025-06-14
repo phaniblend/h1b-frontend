@@ -22,6 +22,7 @@ import HelpPage from './pages/HelpPage';
 import ContactPage from './pages/ContactPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import EmailVerificationPage from './pages/EmailVerificationPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAuthStore } from './store/authStore';
 
@@ -60,6 +61,7 @@ function App() {
               path="/register" 
               element={isActuallyAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />} 
             />
+            <Route path="/verify-email/:token" element={<EmailVerificationPage />} />
             <Route path="/onboarding-confirmation" element={<OnboardingConfirmationPage />} />
             
             {/* Protected Routes */}

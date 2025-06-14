@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, CheckCircle, AlertCircle, User, Mail, Phone, Lock, Building, FileText } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { CityStateDropdown } from '../components/ui/CityStateDropdown';
 
 interface FormData {
   // Personal Info
@@ -123,11 +124,25 @@ const RegisterPage = () => {
         formData.firstName,
         formData.lastName,
         formData.email,
-        formData.password
+        formData.password,
+        formData.phone
       );
       navigate('/onboarding-confirmation');
-    } catch (error) {
-      setErrors({ email: 'Registration failed. Please try again.' });
+    } catch (error: any) {
+      // Handle specific error responses from backend
+      if (error.response?.data) {
+        const { message, field, code } = error.response.data;
+        
+        if (field && code) {
+          // Set field-specific error
+          setErrors({ [field]: message });
+        } else {
+          // General error
+          setErrors({ email: message || 'Registration failed. Please try again.' });
+        }
+      } else {
+        setErrors({ email: 'Registration failed. Please try again.' });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -449,23 +464,17 @@ const RegisterPage = () => {
                     <label htmlFor="workLocation" className="block text-sm font-medium text-gray-700 mb-2">
                       Work Location *
                     </label>
-                    <input
-                      type="text"
-                      id="workLocation"
-                      name="workLocation"
+                    <CityStateDropdown
                       value={formData.workLocation}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        errors.workLocation ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      placeholder="City, State or Remote"
+                      onChange={(value) => {
+                        setFormData(prev => ({ ...prev, workLocation: value }));
+                        if (errors.workLocation) {
+                          setErrors(prev => ({ ...prev, workLocation: undefined }));
+                        }
+                      }}
+                      placeholder="Type city name (e.g., 'dal' for Dallas, TX)"
+                      error={errors.workLocation}
                     />
-                    {errors.workLocation && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center">
-                        <AlertCircle className="h-4 w-4 mr-1" />
-                        {errors.workLocation}
-                      </p>
-                    )}
                   </div>
                 </div>
 

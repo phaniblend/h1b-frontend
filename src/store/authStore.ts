@@ -26,7 +26,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
+  register: (firstName: string, lastName: string, email: string, password: string, phone?: string) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
@@ -82,23 +82,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  register: async (firstName: string, lastName: string, email: string, password: string) => {
+  register: async (firstName: string, lastName: string, email: string, password: string, phone?: string) => {
     set({ isLoading: true });
     try {
+      const requestBody: any = { firstName, lastName, email, password };
+      if (phone) {
+        requestBody.phone = phone;
+      }
+
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         await handleApiError(response);
       }
 
-      // Registration successful - auto-login
-      await get().login(email, password);
+      const data = await response.json();
+      
+      // Don't auto-login since email verification is required
+      set({ isLoading: false });
+      
+      // Return success - user needs to verify email before login
+      return data;
     } catch (error) {
       set({ isLoading: false });
       throw error;

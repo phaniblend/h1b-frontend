@@ -19,8 +19,21 @@ const OnboardingConfirmationPage = () => {
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to H1BConnect!</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Your account has been created successfully. We're excited to help you take control of your H-1B career.
+            Your account has been created successfully. Please check your email to verify your account before proceeding.
           </p>
+          
+          {/* Email Verification Alert */}
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6 max-w-2xl mx-auto">
+            <div className="flex items-center">
+              <Mail className="h-5 w-5 text-yellow-600 mr-3" />
+              <div className="text-left">
+                <h3 className="text-sm font-medium text-yellow-800">Email Verification Required</h3>
+                <p className="text-sm text-yellow-700 mt-1">
+                  We've sent a verification link to your email. Please click the link to activate your account and access all features.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Confirmation Details */}
@@ -33,10 +46,10 @@ const OnboardingConfirmationPage = () => {
                 <span className="text-blue-600 font-bold text-sm">1</span>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Check Your Email</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Verify Your Email</h3>
                 <p className="text-gray-600">
-                  We've sent a confirmation email with your account details and next steps. 
-                  Please check your inbox and spam folder.
+                  We've sent a verification email to activate your account. Please click the verification link 
+                  in your email to proceed. Check your inbox and spam folder.
                 </p>
               </div>
             </div>
