@@ -30,7 +30,7 @@ const OnboardingConfirmationPage = () => {
                 <h3 className="text-sm font-medium text-yellow-800">Email Verification Required</h3>
                 <p className="text-sm text-yellow-700 mt-1">
                   We've sent a verification link to your email. Please click the link to activate your account and access all features.
-                </p>
+          </p>
               </div>
             </div>
           </div>

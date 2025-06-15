@@ -27,11 +27,12 @@ interface AuthState {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (firstName: string, lastName: string, email: string, password: string, phone?: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   setUser: (user: User) => void;
   setToken: (token: string) => void;
   updateUser: (updates: Partial<User>) => void;
   initializeAuth: () => void;
+  validateToken: () => Promise<boolean>;
 }
 
 // Add error logging
@@ -52,6 +53,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   
   login: async (email: string, password: string) => {
     set({ isLoading: true });
+    
+    // Clear any existing auth state before login
+    set({ user: null, token: null, isAuthenticated: false });
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
@@ -59,6 +66,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        // Add cache control to prevent caching issues
+        cache: 'no-cache',
       });
 
       if (!response.ok) {
@@ -141,10 +150,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
   
-  logout: () => {
+  logout: async () => {
+    const currentToken = get().token;
+    
+    // Clear frontend state immediately
     set({ user: null, token: null, isAuthenticated: false });
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    
+    // Try to call backend logout to invalidate token
+    if (currentToken) {
+      try {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`,
+          },
+        });
+      } catch (error) {
+        // If logout fails, we've already cleared frontend state
+        console.warn('Backend logout failed:', error);
+      }
+    }
+    
     // Redirect to homepage after logout
     window.location.href = '/';
   },
@@ -167,6 +196,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  validateToken: async () => {
+    const token = get().token;
+    if (!token) return false;
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/validate`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.user) {
+          set({ user: data.user, isAuthenticated: true });
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+        return true;
+      } else {
+        // Token is invalid, clear auth state
+        set({ user: null, token: null, isAuthenticated: false });
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return false;
+      }
+    } catch (error) {
+      console.warn('Token validation failed:', error);
+      return false;
+    }
+  },
+
   initializeAuth: () => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -176,22 +237,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         user: JSON.parse(user), 
         isAuthenticated: true 
       });
-      // TODO: Validate token with backend
+      // Validate token with backend in the background
+      get().validateToken();
     } else if (token) {
-      // If we have a token but no user data, create a mock user for demo
-      const mockUser = {
-        id: '1',
-        email: 'demo@h1bconnect.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        role: 'user'
-      };
-      set({ 
-        token, 
-        user: mockUser, 
-        isAuthenticated: true 
-      });
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      // If we have a token but no user data, validate it
+      get().validateToken();
     }
   },
 })); 

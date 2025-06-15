@@ -33,9 +33,15 @@ export const LeftSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Navigation will be handled by the logout function
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Still navigate to home even if logout fails
+      navigate('/');
+    }
   };
 
   const isActive = (path: string) => {

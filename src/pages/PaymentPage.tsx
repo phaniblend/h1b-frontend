@@ -155,9 +155,9 @@ const PaymentPage = () => {
             </Link>
             <span className="text-gray-400">|</span>
             <Link to="/documents" className="inline-flex items-center text-blue-600 hover:text-blue-700">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Documents
-            </Link>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Documents
+          </Link>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Complete Your Payment</h1>
           <p className="text-xl text-gray-600">Secure your H1BConnect service with our one-time setup fee</p>

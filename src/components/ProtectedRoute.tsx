@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
-  
+
   // Only consider user authenticated if we have both token and user data
   const isActuallyAuthenticated = isAuthenticated && user;
 
