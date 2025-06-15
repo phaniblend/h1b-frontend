@@ -95,7 +95,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  register: async (firstName: string, lastName: string, email: string, password: string, phone?: string) => {
+  register: async (firstName: string, lastName: string, email: string, password: string, _phone?: string) => {
     set({ isLoading: true });
     try {
       // Note: Backend currently doesn't accept phone field, so we exclude it for now
