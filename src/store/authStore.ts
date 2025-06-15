@@ -62,7 +62,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       if (!response.ok) {
-        await handleApiError(response);
+        const errorText = await response.text();
+        let errorMessage = 'Login failed. Please check your credentials.';
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (e) {
+          // If JSON parsing fails, use the raw text or default message
+          errorMessage = errorText || errorMessage;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -85,10 +98,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (firstName: string, lastName: string, email: string, password: string, phone?: string) => {
     set({ isLoading: true });
     try {
-      const requestBody: any = { firstName, lastName, email, password };
-      if (phone) {
-        requestBody.phone = phone;
-      }
+      // Note: Backend currently doesn't accept phone field, so we exclude it for now
+      const requestBody = { firstName, lastName, email, password };
 
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
@@ -99,7 +110,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
 
       if (!response.ok) {
-        await handleApiError(response);
+        const errorText = await response.text();
+        let errorMessage = 'Registration failed. Please try again.';
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.details && Array.isArray(errorData.details)) {
+            errorMessage = errorData.details.join(', ');
+          }
+        } catch (e) {
+          // If JSON parsing fails, use the raw text or default message
+          errorMessage = errorText || errorMessage;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

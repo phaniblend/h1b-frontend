@@ -129,19 +129,25 @@ const RegisterPage = () => {
       );
       navigate('/onboarding-confirmation');
     } catch (error: any) {
-      // Handle specific error responses from backend
-      if (error.response?.data) {
-        const { message, field, code } = error.response.data;
-        
-        if (field && code) {
-          // Set field-specific error
-          setErrors({ [field]: message });
-        } else {
-          // General error
-          setErrors({ email: message || 'Registration failed. Please try again.' });
-        }
+      console.error('Registration error:', error);
+      
+      // Handle different types of errors
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Check if it's a validation error that mentions specific fields
+      if (errorMessage.toLowerCase().includes('email')) {
+        setErrors({ email: errorMessage });
+      } else if (errorMessage.toLowerCase().includes('password')) {
+        setErrors({ password: errorMessage });
+      } else if (errorMessage.toLowerCase().includes('phone')) {
+        setErrors({ phone: errorMessage });
       } else {
-        setErrors({ email: 'Registration failed. Please try again.' });
+        // General error - show on email field as it's most visible
+        setErrors({ email: errorMessage });
       }
     } finally {
       setIsLoading(false);
